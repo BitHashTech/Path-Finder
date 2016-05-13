@@ -35,13 +35,10 @@ namespace Find_The_Path
         private ContentManager content; 
         private List<object> objects;
         public gui(){}
-        public gui(SpriteBatch spriteBatch ,ContentManager content, List<object> objects)
+        public gui(SpriteBatch spriteBatch ,ContentManager content)
         {
             this.spriteBatch = spriteBatch;
-            this.content = content; 
-            this.objects = objects;
-            setAudio();
-            loadContent();    
+            this.content = content;
         }
         /// <summary>
         /// update the list of things that need to be loaded and drown

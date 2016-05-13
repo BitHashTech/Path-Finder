@@ -33,11 +33,13 @@ namespace Find_The_Path
         SpriteBatch spriteBatch;
         menu menu;
         public static string gameState;
-        public static readonly float frameLen = 18; 
+        public static readonly float frameLen = 18;
+        private static string windowName ;
         public FindThePathGame()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            windowName = this.Window.Title;
         }
 
         /// <summary>
@@ -120,6 +122,10 @@ namespace Find_The_Path
             menu.draw();
             spriteBatch.End();
             base.Draw(gameTime);
+        }
+        public static string getWindow()
+        {
+            return windowName;
         }
     }
 }

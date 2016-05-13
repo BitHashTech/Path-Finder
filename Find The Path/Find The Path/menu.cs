@@ -75,8 +75,11 @@ namespace Find_The_Path
             chooseLevelButtons = new List<chooseLevelButton>(); 
             objects = new List<object>();
             updateListMenu();
-            guiFunction = new gui(spriteBatch, content , objects);
+            guiFunction = new gui(spriteBatch, content);
             mouseState = Mouse.GetState();
+            changeAudio();
+            reinitialize();
+            MediaPlayer.IsRepeating = true;
             game = new playGame();
         }
         private void changeAudio()
@@ -91,6 +94,7 @@ namespace Find_The_Path
         {
             guiFunction.updateList(objects);
             guiFunction.loadContent();
+            MediaPlayer.Play(guiFunction.getAudio());
         }
         /// <summary>
         /// update the objects to be drown for a running level ( game ) 
@@ -169,19 +173,20 @@ namespace Find_The_Path
         {
             try
             {
-                if (FindThePathGame.gameState.Contains("playing") == true) MediaPlayer.Volume = 0.2f;
-                else MediaPlayer.Volume = 1;
-                previousMouseState = mouseState;
-                mouseState = Mouse.GetState();
-                if (MediaPlayer.State != MediaState.Playing)
+                if (System.Windows.Forms.Form.ActiveForm != null &&System.Windows.Forms.Form.ActiveForm.Text.Equals(FindThePathGame.getWindow()) == true)
                 {
-                    if (FindThePathGame.gameState.Contains("loading") == true)
+                    previousMouseState = mouseState;
+                    mouseState = Mouse.GetState();
+                }
+                if (FindThePathGame.gameState.Contains("loading") == true)
+                {
+                    if (MediaPlayer.State == MediaState.Stopped)
                     {
                         string levelNum = FindThePathGame.gameState;
                         levelNum = levelNum.Remove(0, 7);
-                        FindThePathGame.gameState = "playing" + levelNum;
+                        MediaPlayer.Volume = 0.2f;
+                        MediaPlayer.IsRepeating = true; 
                         levelNum = levelNum.Remove(0, 5);
-                        changeAudio();
                         if (levelNum != "R")
                         {
                             startGame(int.Parse(levelNum));
@@ -191,8 +196,6 @@ namespace Find_The_Path
                             startGame(-1);
                         }
                     }
-
-                    MediaPlayer.Play(guiFunction.getAudio());
                 }
 
                 if (FindThePathGame.gameState.Contains("playing") == true)
@@ -205,7 +208,8 @@ namespace Find_The_Path
                         FindThePathGame.gameState = "ballMovement";
                         changeAudio();
                         game.UnloadContent(path);
-                        guiFunction.loadContent();
+                        MediaPlayer.Volume = 1;
+                        reinitialize();
                     }
                 }
                 else if (FindThePathGame.gameState.Contains("loading") == true)
@@ -271,16 +275,16 @@ namespace Find_The_Path
                                 {
                                     b.work();
                                     changeAudio();
-
+                                    MediaPlayer.Volume = 1;
+                                    MediaPlayer.IsRepeating = true;
                                     if (FindThePathGame.gameState == "choose")
                                     {
                                         updateChooseLevel();
-
                                         reinitialize();
                                     }
                                     else if (FindThePathGame.gameState.Contains("loading") == true)
                                     {
-
+                                        MediaPlayer.IsRepeating = false;
                                         updateListLoading();
                                         reinitialize();
                                         MediaPlayer.Play(guiFunction.getAudio());
@@ -293,6 +297,7 @@ namespace Find_The_Path
                                     else if (FindThePathGame.gameState == "reset")
                                     {
                                         startGame(game.getLevelNumber());
+                                        MediaPlayer.Volume = 0.2f;
                                     }
                                     else if (FindThePathGame.gameState == "nextLevel")
                                     {
@@ -305,7 +310,7 @@ namespace Find_The_Path
                                         {
                                             startGame(game.getLevelNumber() + 1);
                                         }
-
+                                        MediaPlayer.Volume = 0.2f;
                                     }
                                     else if (FindThePathGame.gameState == "credits")
                                     {
